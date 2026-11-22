@@ -43,16 +43,20 @@ const stCrest = (team, size) =>
 // The illustrated header's scene: 200 × 80, drawn to the banner's right edge. A stadium: its stands full of fans, two
 // floodlights, the scoreboard over the stands with `sign` (the score, or "vs"), the pitch with its lines. By night
 // (the dark theme) the sky darkens; while the game is live the floodlights shine and the scoreboard's frame glows.
-const stScene = ({ night, live, sign, animate }) => {
+// `mini`: the mini card draws its own scoreboard (crests and score) over the stadium, so the scene's own is hidden
+// while that one shows (class "under"), and its right floodlight stands clear of the zoom button, in the top right
+// corner.
+const stScene = ({ night, live, sign, animate, mini = false }) => {
   const stand = night ? "#1d2c42" : "#2f4a6d";
   const fans = ["#ffffff", "#f2c94c", "#74c0fc"];
   const seats = Array.from({ length: 24 }, (_, i) => `<rect x="${30 + i * 6}" y="${40 + (i % 3)}" width="4" height="3" rx="1" fill="${fans[i % 3]}" opacity="${night ? 0.7 : 0.9}"/>`).join("");
   const beam = (x) =>
     `<g><rect x="${x}" y="6" width="2" height="40" fill="#8aa0b8"/><rect x="${x - 6}" y="2" width="14" height="7" rx="1" fill="${live ? "#fffbe6" : "#c9d4e2"}"/>${live ? `<path d="M${x - 6} 9 L${x - 26} 64 L${x + 28} 64 L${x + 8} 9Z" fill="#fff9db" opacity="${night ? 0.16 : 0.1}"/>` : ""}</g>`;
   const glow = live && animate ? `<animate attributeName="stroke-opacity" values="1;.25;1" dur="${ST_LOOP}s" repeatCount="indefinite"/>` : "";
-  return `<path d="M20 52 L40 34 H180 L200 52 Z" fill="${stand}"/>${seats}${beam(70)}${beam(182)}
-    <rect class="sign" x="86" y="15" width="48" height="19" rx="2" fill="#0b1626" stroke="${live ? "#4dabf7" : "#53627a"}">${glow}</rect>
-    <text x="110" y="28.5" text-anchor="middle" font-family="Roboto,sans-serif" font-size="10.5" font-weight="700" fill="#ffd43b">${rcEsc(sign)}</text>
+  const board = `<g class="sgn${mini ? " under" : ""}"><rect class="sign" x="86" y="15" width="48" height="19" rx="2" fill="#0b1626" stroke="${live ? "#4dabf7" : "#53627a"}">${glow}</rect>
+    <text x="110" y="28.5" text-anchor="middle" font-family="Roboto,sans-serif" font-size="10.5" font-weight="700" fill="#ffd43b">${rcEsc(sign)}</text></g>`;
+  return `<path d="M20 52 L40 34 H180 L200 52 Z" fill="${stand}"/>${seats}${beam(70)}${beam(mini ? 148 : 182)}
+    ${board}
     <path d="M0 60 H200 V80 H0Z" fill="${night ? "#2a6b33" : "#3c9a3c"}"/><path d="M100 60 V80 M56 80 Q100 62 144 80" stroke="#fff" stroke-width="1" fill="none" opacity=".7"/>`;
 };
 
@@ -232,7 +236,7 @@ class SportsCard extends RcCard {
           <div class="badge"><ha-icon icon="${ST_ICONS[g?.sport || "other"]}"></ha-icon></div>
           <div class="tt"><div class="trow"><div class="title">${rcEsc(this._title(m))}</div>${chip}</div>${sub}</div>
         </div>
-        <svg class="room" viewBox="0 0 200 80" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">${stScene({ night, live: m.level === "live", sign, animate: this._animate() })}</svg>
+        <svg class="room" viewBox="0 0 200 80" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">${stScene({ night, live: m.level === "live", sign, animate: this._animate(), mini: !!extra })}</svg>
         ${extra}
         <div class="ground"></div>
       </div>`;
@@ -436,12 +440,13 @@ class SportsCard extends RcCard {
     /* The mini card: the banner alone, its readings as chips on the sky, the scoreboard over the stadium. */
     ha-card.bn { padding: 0; }
     ha-card.bn > .banner { margin: 0; --sw: min(200px, 46%); }
-    .msb { position: absolute; z-index: 2; right: 36px; top: 22px; display: flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 9px;
+    .msb { position: absolute; z-index: 2; right: 34px; top: 30px; display: flex; align-items: center; gap: 5px; padding: 4px 7px; border-radius: 9px;
            background: rgba(11,22,38,.86); color: #ffd43b; font-size: 17px; font-weight: 700; white-space: nowrap; }
     .msb .vs { font-size: 12px; font-weight: 500; color: #dbe4ee; }
+    .sgn.under { display: none; }
     /* Narrower cards: the stadium is drawn smaller (75 %, 62 %, then 50 % of its height, its left part cropped). */
     @container (max-width: 420px) { .banner, ha-card.bn > .banner { --sw: 150px; --sk: .75; } }
-    @container (max-width: 340px) { .banner, ha-card.bn > .banner { --sw: 112px; --sk: .62; } .msb { display: none; } }
+    @container (max-width: 340px) { .banner, ha-card.bn > .banner { --sw: 112px; --sk: .62; } .msb { display: none; } .sgn.under { display: inline; } }
     @container (max-width: 260px) { .banner, ha-card.bn > .banner { --sw: 70px; --sk: .5; } }
     /* The chips that do not fit wrap to a second line, hidden: never a chip cut to "R…". */
     .banner .rs { display: flex; flex-wrap: wrap; gap: 4px; height: 20px; margin: 3px 0 0 -2px; min-width: 0; overflow: hidden; }
