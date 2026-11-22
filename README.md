@@ -145,6 +145,7 @@ entity: sensor.my_team
 - **Clock**: soccer's minute alone (`67'`); the quarter (American football, basketball), the period (hockey) or the half (rugby) before the clock of the other team sports; the bar of how far the game has gone comes from them
 - **Default tab**: the live game, else the next game to start, else the first team
 - **Crests**: `team_logo` / `opponent_logo` when given (loaded from the provider), else a shield drawn in `team_colors` / `opponent_colors` (else a colour from the name) with the abbreviation
+- **Refresh**: the card follows the TeamTracker sensors (their own polling, faster during a live game); it fetches nothing itself
 - **Read only**: the card calls no action
 
 ## Development
