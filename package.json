@@ -1,6 +1,6 @@
 {
   "name": "ha-sports-card",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Lovelace card for Home Assistant following your teams with TeamTracker: the live score, the next game and the result, one tab per team.",
   "repository": {
     "type": "git",
