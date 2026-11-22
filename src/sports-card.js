@@ -452,6 +452,7 @@ class SportsCard extends RcCard {
     .banner .rs { display: flex; flex-wrap: wrap; gap: 4px; height: 20px; margin: 3px 0 0 -2px; min-width: 0; overflow: hidden; }
     .banner .r { flex: none; line-height: 20px; padding: 0 7px; color: var(--bt); background: rgba(255,255,255,.62); }
     .banner.night .r { background: rgba(10,20,40,.4); }
+    .banner span.r { cursor: default; }
     @media (prefers-reduced-motion: reduce) { .lvl-live .bdot { animation: none; } }
   `;
 }
@@ -492,7 +493,9 @@ class SportsMiniCard extends rcMini(SportsCard, "sports-mini-card", "") {
     if (!this._changed(["mini", m.level, m.tab, m.games, this._night(), this._dark()])) return;
     const status = this._status(m);
     const sub = m.none ? this._t("no_team") : this._sub(m);
-    const chips = sub ? `<div class="rs"><button class="r"${m.g ? ` data-id="${rcEsc(m.g.id)}"` : ""} title="${rcEsc(sub)}"><span>${rcEsc(sub)}</span></button></div>` : "";
+    // The chip opens the game; with no team it is text alone, never a button that does nothing.
+    const chip = m.g ? `<button class="r" data-id="${rcEsc(m.g.id)}" title="${rcEsc(sub)}"><span>${rcEsc(sub)}</span></button>` : `<span class="r" title="${rcEsc(sub)}"><span>${rcEsc(sub)}</span></span>`;
+    const chips = sub ? `<div class="rs">${chip}</div>` : "";
     const g = m.g;
     const scored = g && g.team.score != null && ["live", "won", "lost", "draw"].includes(m.level);
     const board = g && ["live", "pre", "won", "lost", "draw"].includes(m.level) ? `<div class="msb">${stCrest(g.team, 24)}${scored ? `<span>${rcEsc(this._score(g))}</span>` : `<span class="vs">${rcEsc(this._t("vs"))}</span>`}${stCrest(g.opp, 24)}</div>` : "";
