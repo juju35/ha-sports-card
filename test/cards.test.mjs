@@ -69,7 +69,7 @@ test("live: the scoreboard, the clock, the progress bar, the last play and the d
   assert.match(html, /<div class="subt">Harbor City 2 – 1 Northside Rovers<\/div>/);
   assert.match(html, /<span class="score">2 – 1<\/span>/);
   assert.match(html, /class="bar" role="progressbar" aria-valuenow="74"/);
-  assert.match(html, /Win probability 71 %/);
+  assert.match(html, /Win probability 71%/);
   assert.match(html, /<div class="lp">Goal! Harbor City FC 2/);
   assert.match(html, /<span class="xl">TV<\/span><span class="xv">SportOne<\/span>/);
   assert.match(html, /Records: 8-3-2 · 6-4-3/);

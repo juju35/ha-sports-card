@@ -173,6 +173,14 @@ class SportsCard extends RcCard {
     }
   }
 
+  _pct(v) {
+    try {
+      return stIntl(Intl.NumberFormat, this._lang(), { style: "percent", maximumFractionDigits: 0 }).format(Math.round(v) / 100);
+    } catch {
+      return `${Math.round(v)}%`;
+    }
+  }
+
   // The clock as shown: soccer's minute alone, the quarter or period before the clock of the other team sports.
   _clock(g) {
     const n = stNum(g.period);
@@ -259,7 +267,7 @@ class SportsCard extends RcCard {
         ? `<div class="mid pre"><span class="vs">${rcEsc(this._t("vs"))}</span><span class="ko">${rcEsc(this._when(g.date) || g.kickoff)}</span></div>`
         : `<div class="mid"><span class="score">${rcEsc(this._score(g))}</span></div>`;
     const bar = m.level === "live" && g.progress != null ? `<div class="bar" role="progressbar" aria-valuenow="${Math.round(g.progress * 100)}" aria-valuemin="0" aria-valuemax="100"><span style="width:${(g.progress * 100).toFixed(1)}%"></span></div>` : "";
-    const prob = m.level === "live" && g.team.prob != null ? `<div class="pb">${rcEsc(this._t("win_prob", { p: Math.round(g.team.prob <= 1 ? g.team.prob * 100 : g.team.prob) }))}</div>` : "";
+    const prob = m.level === "live" && g.team.prob != null ? `<div class="pb">${rcEsc(this._t("win_prob", { p: this._pct(g.team.prob <= 1 ? g.team.prob * 100 : g.team.prob) }))}</div>` : "";
     const last = m.level === "live" && c.show_last_play !== false && g.last ? `<div class="lp">${rcEsc(g.last)}</div>` : "";
     const head = [g.league, g.event || g.series].filter(Boolean).join(" · ");
     return `<button class="box sb" data-id="${rcEsc(g.id)}">
